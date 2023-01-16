@@ -110,21 +110,11 @@ int main(int argc, char **argv) {
 
 
     } else {
-        ifstream file;
-        file.open(result["queries"].as<string>());
-        if (!file.is_open()) {
-            cout << "Unable to open file" << endl;
-            return 1;
-        }
-        string algorithm = result["algorithm"].as<string>();
-        transform(algorithm.begin(), algorithm.end(), algorithm.begin(), ::tolower);
+        if(result["queries"].as<string>().empty()) {
+            string algorithm = result["algorithm"].as<string>();
+            transform(algorithm.begin(), algorithm.end(), algorithm.begin(), ::tolower);
+            string line = result["queries"].as<string>();
 
-        string hashParam = result["hash"].as<string>();
-        transform(hashParam.begin(), hashParam.end(), hashParam.begin(), ::tolower);
-        string line;
-        while (getline(file, line)) {
-            if(result["trim"].as<bool>())trim(line);
-            if(line.empty()) continue;
             string hash;
 
             if (algorithm == "md5") {
@@ -151,11 +141,57 @@ int main(int argc, char **argv) {
                 cout << "Incorrect or unsupported algorithm!" << endl;
                 return 1;
             }
-            if(hash == hashParam) {
-                cout << "[FOUND] Hash phrase is " << line << endl;
-                tmp = line;
+        } else {
+            ifstream file;
+            file.open(result["queries"].as<string>());
+            if (!file.is_open()) {
+                cout << "Unable to open file" << endl;
+                return 1;
+            }
+            string algorithm = result["algorithm"].as<string>();
+            transform(algorithm.begin(), algorithm.end(), algorithm.begin(), ::tolower);
+
+            string hashParam = result["hash"].as<string>();
+            transform(hashParam.begin(), hashParam.end(), hashParam.begin(), ::tolower);
+            string line;
+            while (getline(file, line)) {
+                if(result["trim"].as<bool>())trim(line);
+                if(line.empty()) continue;
+                string hash;
+
+                if (algorithm == "md5") {
+                    hash = hashIt<MD5>(line);
+                } else if (algorithm == "md4") {
+                    hash = hashIt<MD4>(line);
+                } else if (algorithm == "md2") {
+                    hash = hashIt<MD2>(line);
+                } else if(algorithm == "sha1") {
+                    hash = hashIt<SHA1>(line);
+                } else if(algorithm == "sha256") {
+                    hash = hashIt<SHA256>(line);
+                } else if(algorithm == "sha224") {
+                    hash = hashIt<SHA224>(line);
+                } else if(algorithm == "sha384") {
+                    hash = hashIt<SHA384>(line);
+                } else if(algorithm == "sha512") {
+                    hash = hashIt<SHA512>(line);
+                } else if(algorithm == "blake2b") {
+                    hash = hashIt<BLAKE2b>(line);
+                } else if(algorithm == "blake2s") {
+                    hash = hashIt<BLAKE2s>(line);
+                } else {
+                    cout << "Incorrect or unsupported algorithm!" << endl;
+                    return 1;
+                }
+                if(hash == hashParam) {
+                    cout << "[FOUND] Hash phrase is " << line << endl;
+                    tmp = line;
+                }
             }
         }
+
+
+
 
     }
 
