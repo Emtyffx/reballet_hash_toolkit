@@ -141,6 +141,7 @@ int main(int argc, char **argv) {
                 cout << "Incorrect or unsupported algorithm!" << endl;
                 return 1;
             }
+            cout << "hash of " + line + " is " + hash << endl;
         } else {
             ifstream file;
             file.open(result["queries"].as<string>());
