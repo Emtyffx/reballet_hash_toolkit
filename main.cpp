@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 
 
     } else {
-        if(result["queries"].as<string>().empty()) {
+        if(result["hash"].as<string>().empty()) {
             string algorithm = result["algorithm"].as<string>();
             transform(algorithm.begin(), algorithm.end(), algorithm.begin(), ::tolower);
             string line = result["queries"].as<string>();
