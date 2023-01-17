@@ -20,11 +20,10 @@
 #include <string>
 #include <fstream>
 
-
 #define CXXOPTS_USE_UNICODE true
 using namespace std;
 using namespace CryptoPP;
-string tmp;
+
 const string logo = "\n"
                     "██████╗░███████╗██████╗░░█████╗░██╗░░░░░██╗░░░░░███████╗████████╗\n"
                     "██╔══██╗██╔════╝██╔══██╗██╔══██╗██║░░░░░██║░░░░░██╔════╝╚══██╔══╝\n"
@@ -45,6 +44,7 @@ int main(int argc, char **argv) {
             ("h,help", "Help")
             ("L,linehash", "Hash line by line", cxxopts::value<bool>())
             ("o,outfile", "File to output", cxxopts::value<string>()->default_value("reballethash.output"))
+            ("W,writeline", "Write line to hash into the output file", cxxopts::value<bool>())
             ;
 
     auto result = options.parse(argc, argv);
@@ -102,7 +102,12 @@ int main(int argc, char **argv) {
                 cout << "Incorrect or unsupported algorithm!" << endl;
                 return 1;
             }
-            outfile << line << " - "<< hash << "\n";
+            if(result["writeline"].as<bool>()) {
+                outfile << line << " - " << hash << "\n";
+            }
+            else {
+                outfile << hash << "\n";
+            }
 
         }
 
@@ -186,7 +191,6 @@ int main(int argc, char **argv) {
                 }
                 if(hash == hashParam) {
                     cout << "[FOUND] Hash phrase is " << line << endl;
-                    tmp = line;
                 }
             }
         }
@@ -202,6 +206,3 @@ int main(int argc, char **argv) {
 
 
 }
-
-
-
